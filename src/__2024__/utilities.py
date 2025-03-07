@@ -1,6 +1,6 @@
 import os
 import stat
-from enum import Enum, auto
+from enum import Enum
 
 class Year(Enum):
     y2024 = '__2024__'
