@@ -1,6 +1,13 @@
 import os
 import stat
-def read_file(file_path):
+from enum import Enum, auto
+
+class Year(Enum):
+    y2024 = '__2024__'
+    y2025 = '__2025__'
+
+def read_file(year: Year,file_name):
+    file_path = os.path.abspath('data\\'+year.value+'\\'+file_name)
     os.chmod(file_path, stat.S_IRWXU)
     lines = []
     with open(file_path) as file:

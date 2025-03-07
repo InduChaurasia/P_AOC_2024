@@ -1,13 +1,10 @@
-
-import util
-import os
 from collections import Counter
+from utilities import Year, read_file
 
 def getInput():
-    input_file = os.path.abspath('data\\__2024__\\day1.txt')
     locations1 = []
     locations2= []
-    lines  = util.read_file(input_file)
+    lines  = read_file(Year.y2024, 'day1.txt')
     for line in lines:
         arr = line.split('   ')
         locations1.append(int(arr[0]))
@@ -38,7 +35,6 @@ def main():
     part2 = solution_part2()
     print('part1: ' ,part1)
     print('part2: ', part2)
-
 
 if __name__=='__main__':
     main()
