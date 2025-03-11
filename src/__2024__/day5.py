@@ -9,7 +9,7 @@ def read_inputs():
             continue
         if('|' in line):
             key,val = line.split('|')
-            rules[key].append(val)    
+            rules[key].append(val)
         else:
             prints.append(line.split(','))
     return rules,prints
