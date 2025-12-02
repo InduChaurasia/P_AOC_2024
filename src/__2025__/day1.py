@@ -1,3 +1,4 @@
+'''https://adventofcode.com/2025/day/1'''
 from utilities import Year, read_file
 from node import Node
 
