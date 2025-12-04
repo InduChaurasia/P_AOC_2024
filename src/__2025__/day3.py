@@ -13,14 +13,14 @@ def max_joltage_for_bank(no_of_batteries:int,joltage_bank:str)-> int:
             max_joltage=max(max_joltage,int(next_joltage[:i]+next_joltage[i+1:]))
     return max_joltage
 
-def max_joltage_sum(size:int)-> int:
-    jolt_banks=read_input()
-    jolt_sum=0
-    for jolt_bank in jolt_banks:
-        result=max_joltage_for_bank(size,jolt_bank)
-        jolt_sum+=result
-    print(f'Total joltage for {size} batteries: {jolt_sum}')
-    return jolt_sum
+def max_joltage_sum(no_of_batteries:int)-> int:
+    joltage_banks=read_input()
+    total_joltage=0
+    for joltage_bank in joltage_banks:
+        max_joltage=max_joltage_for_bank(no_of_batteries,joltage_bank)
+        total_joltage+=max_joltage
+    print(f'Total joltage for {no_of_batteries} batteries: {total_joltage}')
+    return total_joltage
 
 def main():
     max_joltage_sum(2)
