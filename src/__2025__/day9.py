@@ -28,68 +28,64 @@ def max_area_rectangle(red_tiles: list[tuple[int, int]]) -> int:
 
 def max_area_rectangle_only_tiles(red_tiles: list[tuple[int, int]]) -> int:
     # original to compact row
-    r_to_R = {0: 0}
+    r_to_cr = {0: 0}
     # compact to original row
-    R_to_r = {0: 0}
+    cr_to_r = {0: 0}
     # original to compact column
-    c_to_C = {0: 0}
+    c_to_cc = {0: 0}
     # compact to original column
-    C_to_c = {0: 0}
+    cc_to_c = {0: 0}
 
     def compact_points(red_tiles):
-        clone = list(red_tiles)
-        clone.sort()
-        rma = 0
-        for r, c in clone:
-            nr = lr+2 if r not in r_to_R else r_to_R[r]
-            r_to_R[r] = nr
-            R_to_r[nr] = r
-            rma = max(rma, nr)
+        rs = sorted({r for r, _ in red_tiles})
+        cs = sorted({c for _, c in red_tiles})
+        for r in rs:
+            nr = lr+1 if r not in r_to_cr else r_to_cr[r]
+            r_to_cr[r] = nr
+            cr_to_r[nr] = r
             lr = nr
-
-        clone.sort(key=lambda p: p[1])
-        cma = 0
-        for r, c in clone:
-            nc = lc+2 if c not in c_to_C else c_to_C[c]
-            c_to_C[c] = nc
-            C_to_c[nc] = c
-            cma = max(cma, nc)
+        for c in cs:
+            nc = lc+1 if c not in c_to_cc else c_to_cc[c]
+            c_to_cc[c] = nc
+            cc_to_c[nc] = c
             lc = nc
 
-        for i, (r, c) in enumerate(red_tiles):
-            red_tiles[i] = (r_to_R[r], c_to_C[c])
-        return rma, cma
+        compact_tiles = [(r_to_cr[r], c_to_cc[c]) for r, c in red_tiles]
+        return compact_tiles
 
-    r, c = compact_points(red_tiles)
-    matrix = create_tile_matrix(red_tiles, r, c)
+    red_tiles = compact_points(red_tiles)
+    matrix = create_matrix_with_red_tiles(red_tiles)
+    matrix = fill_green_tile_edge(matrix, red_tiles)
     l = len(red_tiles)
     max_area = 0
     for i in range(l-1):
         x1, y1 = red_tiles[i]
         # find the original points
-        x1, y1 = R_to_r[x1], C_to_c[y1]
+        x1, y1 = cr_to_r[x1], cc_to_c[y1]
         for j in range(i+1, l):
             x2, y2 = red_tiles[j]
             # find the original points
-            x2, y2 = R_to_r[x2], C_to_c[y2]
+            x2, y2 = cr_to_r[x2], cc_to_c[y2]
             area = (abs(x2-x1)+1)*(abs(y2-y1)+1)
-            if area > max_area and is_tile_rectangle(red_tiles[i], red_tiles[j], matrix, red_tiles):
+            if area > max_area and is_rectangle_of_tiles(red_tiles[i], red_tiles[j], matrix, red_tiles):
                 max_area = area
     return max_area
 
 
-def create_tile_matrix(red_tiles: list[tuple[int, int]], r: int, c: int) -> list[list[int]]:
-    matrix = []
-    for i in range(r+1):
-        row = []
-        for j in range(c+1):
-            row.append('#' if (i, j) in red_tiles else '.')
-        matrix.append(row)
+def create_matrix_with_red_tiles(red_tiles: list[tuple[int, int]]) -> list[list[int]]:
+    r = sorted({r for r, _ in red_tiles})[-1]+1
+    c = sorted({c for _, c in red_tiles})[-1]+1
+    matrix = [['#' if (i, j) in red_tiles else '.' for j in range(c)]
+              for i in range(r)]
+    return matrix
 
+
+def fill_green_tile_edge(matrix, red_tiles):
     red_tiles.append(red_tiles[0])
     p1 = red_tiles[0]
-    for k in range(1, len(red_tiles)):
-        p2 = red_tiles[k]
+    for p2 in red_tiles:
+        if p1 == p2:
+            continue
         if p1[0] == p2[0]:
             r = p1[0]
             r1 = p1[1] if p1[1] < p2[1] else p2[1]
@@ -110,7 +106,7 @@ def create_tile_matrix(red_tiles: list[tuple[int, int]], r: int, c: int) -> list
     return matrix
 
 
-def is_tile_rectangle(p1, p2, matrix, red_tiles) -> bool:
+def is_rectangle_of_tiles(p1, p2, matrix, red_tiles) -> bool:
     r1 = p1[0] if p1[0] < p2[0] else p2[0]
     r2 = p1[0] if p1[0] > p2[0] else p2[0]
     c1 = p1[1] if p1[1] < p2[1] else p2[1]
